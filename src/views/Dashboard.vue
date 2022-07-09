@@ -4,8 +4,8 @@
       <v-card-title>Localizar Dispositivo</v-card-title>
       <v-card-text>
         <v-col cols="4">
-          <v-select :items="dispositivos" item-text="descripcion" item-value="dispositivoid"
-            v-model="selectDispositivo" label="Selecciones un dispositivo" @change="getLocalizaciones">
+          <v-select :items="dispositivos" item-text="descripcion" item-value="dispositivoid" v-model="selectDispositivo"
+            label="Selecciones un dispositivo" @change="getLocalizaciones">
           </v-select>
         </v-col>
       </v-card-text>
@@ -14,7 +14,15 @@
     <v-card outlined elevation="3" class="mt-2">
       <v-card-title>Localizaciones</v-card-title>
       <v-card-text>
-        <Mapa></Mapa>
+        <div style="height: 450px; width: 95%;margin-left: 1%">
+          <l-map style="height: 80%" :zoom="zoom" :center="center" v-if="cargar">
+            <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+            <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color"></l-polyline>
+            <l-marker :lat-lng="markerLatLng">
+            </l-marker>
+          </l-map>
+        </div>
+        <!--         <Mapa></Mapa> -->
       </v-card-text>
     </v-card>
 
@@ -62,17 +70,51 @@
 
 <script>
 import User from "../apis/User";
-import Mapa from "../components/Mapa.vue";
+import { LMap, LTileLayer, LPolyline, LMarker, LIcon} from 'vue2-leaflet';
+import { Icon } from 'leaflet';
+
+
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
+/* import Mapa from "../components/Mapa.vue"; */
 export default {
+  /*   components: {
+      Mapa,
+    }, */
   components: {
-    Mapa,
+    LMap,
+    LTileLayer,
+    LPolyline,
+    LMarker,
+    LIcon
   },
   data() {
     return {
       dialog: false,
       user: null,
       date: null,
-      dispositivos: []
+      cargar:false,
+      dispositivos: [],
+      selectDispositivo:'',
+      //variables para el mapa
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution:
+        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      zoom: 16,
+      //center: [-25.468671988081482, -57.42948006701373],
+      center:[],
+      polyline: {
+        //latlngs: [[-25.468535,-57.429403], [-25.468117,-57.429185], [-25.468349,-57.428549]],
+        latlngs:[],
+        color: 'red'
+      },
+      //markerLatLng:[-25.468349,-57.428549]
+      markerLatLng:[]
     };
   },
   created() {
@@ -81,7 +123,7 @@ export default {
     });
     this.getDispositivos();
   },
-  methods:{
+  methods: {
     getDispositivos() {
       User.dispositivosUsuario(localStorage.user)
         .then(response => {
@@ -90,6 +132,17 @@ export default {
           console.log(error.response.data)
         })
     },
+    getLocalizaciones() {
+      User.obtenerLocalizaciones(this.selectDispositivo)
+      .then(response=>{
+        this.center = response.data[0]
+        this.polyline.latlngs = response.data
+        this.markerLatLng = response.data[response.data.length-1]
+        this.cargar = true
+      }).catch(error=>{
+        console.log(error.response.data) 
+      })
+    }
   }
 };
 </script>

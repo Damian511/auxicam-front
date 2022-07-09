@@ -50,7 +50,15 @@ const routes = [
       return import('../views/Historial.vue')
     },
     meta: { authOnly: true }
-  }
+  },
+  {
+    path: "/passChange",
+    name: "PassChange",
+    component: function () {
+      return import('../views/PassChange.vue')
+    },
+    meta: { authOnly: true }
+  },
 ]
 
 const router = new VueRouter({

@@ -1,63 +1,72 @@
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="4">
-        <v-select :items="dispositivos" item-text="mascota.nombre" v-model="selectDispositivo"
-          item-value="dispositivoid" label="Selecciones un dispositivo" @change="getLocalizacionesDispositivos">
-        </v-select>
-      </v-col>
-      <v-col cols="3">
-        <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="fechaInicio" label="Fecha Inicio" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-              v-on="on" clearable></v-text-field>
-          </template>
-          <v-date-picker v-model="fechaInicio" @input="menu = false"></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col cols="3">
-        <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="fechaFin" label="Fecha Fin" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-              v-on="on" clearable></v-text-field>
-          </template>
-          <v-date-picker v-model="fechaFin" @input="menu2 = false"></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col>
-        <v-btn text class="mt-5 ml-n3" @click="buscar">
-          Buscar
-        </v-btn>
-      </v-col>
-    </v-row>
-    <!--container-->
-    <span class="headline">Historial de Localizaciones</span>
-    <v-data-table v-if="table" :headers="headers" :header-props="headerProps" :items="items" :items-per-page="5"
-      class="elevation-1">
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-btn color="primary" class="white--text" @click="detalle(item)">Ubicación</v-btn>
-      </template>
-    </v-data-table>
-
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="600" persistent>
-      <v-card>
-        <v-card-title>
-          <v-toolbar color="primary" class="white--text">Historial Ubicación
-            <v-spacer></v-spacer>
-            <v-icon color="white" @click="dialog = false">close</v-icon>
-          </v-toolbar>
-        </v-card-title>
+  <div class="m-3">
+    <v-card outlined elevation="3">
+      <v-card-title>Historial de Ubicaciones</v-card-title>
+      <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validar">
         <v-card-text>
-          <GmapMap :center="{ lat: -25.4922182, lng: -57.4554114 }" :zoom="7" map-type-id="terrain"
-            style="width: 550px; height: 250px">
-            <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true"
-              :draggable="true" @click="center = m.position" />
-          </GmapMap>
+          <v-row>
+            <v-col cols="3">
+              <v-select :items="dispositivos" item-text="descripcion" item-value="dispositivoid"
+                v-model="selectDispositivo" label="Selecciones un dispositivo" :rules="defaultRules">
+              </v-select>
+            </v-col>
+            <v-col cols="3">
+              <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                offset-y min-width="auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field v-model="fecha" label="Fecha Inicio" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                    v-on="on" clearable :rules="defaultRules"></v-text-field>
+                </template>
+                <v-date-picker v-model="fecha" @input="menu = false" locale="es"></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="3">
+              <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :nudge-right="40"
+                :return-value.sync="horaInicio" transition="scale-transition" offset-y max-width="290px"
+                min-width="290px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field v-model="horaInicio" label="Hora Inicio" prepend-icon="schedule" readonly v-bind="attrs"
+                    v-on="on" :rules="defaultRules"></v-text-field>
+                </template>
+                <v-time-picker v-if="menu2" v-model="horaInicio" full-width
+                  @click:minute="$refs.menu2.save(horaInicio)">
+                </v-time-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="3">
+              <v-menu ref="menu3" v-model="menu3" :close-on-content-click="false" :nudge-right="40"
+                :return-value.sync="horaFin" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field v-model="horaFin" label="Hora Fin" prepend-icon="schedule" readonly v-bind="attrs"
+                    v-on="on" :rules="defaultRules"></v-text-field>
+                </template>
+                <v-time-picker v-if="menu3" v-model="horaFin" full-width @click:minute="$refs.menu3.save(horaFin)">
+                </v-time-picker>
+              </v-menu>
+            </v-col>
+          </v-row>
         </v-card-text>
-      </v-card>
-    </v-dialog>
+        <v-card-actions>
+          <v-btn dark color="primary" block @click.prevent="validate">BUSCAR</v-btn>
+        </v-card-actions>
+      </v-form>
+    </v-card>
+
+    <v-card outlined elevation="3" class="mt-2">
+      <v-card-title>Localizaciones</v-card-title>
+      <v-card-text>
+        <div style="height: 500px; width: 95%;margin-left: 1%">
+          <l-map style="height: 80%" :zoom="zoom" :center="center" v-if="cargar">
+            <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+            <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color"></l-polyline>
+            <l-marker :lat-lng="markerLatLng">
+            </l-marker>
+          </l-map>
+        </div>
+        <!--         <Mapa></Mapa> -->
+      </v-card-text>
+    </v-card>
+
     <!--pie de pagina-->
     <v-footer color="blue-grey darken-1" padless absolute>
       <v-row justify="center" no-gutters>
@@ -75,21 +84,61 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </v-container>
+  </div>
 </template>
 <script>
-import axios from "axios";
+import User from "../apis/User";
+import { LMap, LTileLayer, LPolyline, LMarker, LIcon} from 'vue2-leaflet';
+import { Icon } from 'leaflet';
+
+
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
 //import Mapa from "@/components/AddGoogleMap.vue";
 export default {
   components: {
     //Mapa,
+    LMap,
+    LTileLayer,
+    LPolyline,
+    LMarker,
+    LIcon
   },
   data() {
     return {
+      cargar:false,
+      //variables para el mapa
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution:
+        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      zoom: 16,
+      //center: [-25.468671988081482, -57.42948006701373],
+      center:[],
+      polyline: {
+        //latlngs: [[-25.468535,-57.429403], [-25.468117,-57.429185], [-25.468349,-57.428549]],
+        latlngs:[],
+        color: 'red'
+      },
+      //markerLatLng:[-25.468349,-57.428549]
+      markerLatLng:[],
+      //reglas para el formulario
+      defaultRules: [(v) => !!v || "El campo es requerido"],
+      //variable para validar formulario
+      valid: true,
       menu: false,
       menu2: false,
-      fechaInicio: "",
-      fechaFin: "",
+      menu3: false,
+      //variable para cargar el select
+      dispositivos: [],
+      selectDispositivo: "",
+      fecha: "",
+      horaInicio: "",
+      horaFin: "",
       table: false,
       dialog: false,
       dispositivos: [],
@@ -116,63 +165,55 @@ export default {
     this.getDispositivos();
   },
   methods: {
-    buscar() {
-      if (this.selectDispositivo == '') {
-        this.textSnack = "No puede busacr sin seleccionar al menos un dispositivo"
-        this.snackbar = true
-      } else {
-        if (this.fechaInicio == '' || this.fechaFin == '') {
-          this.textSnack = "Debe completar los campos fecha inicio y fecha fin"
-          this.snackbar = true
-        } else {
-          this.getLocalizacionesDispositivos()
-        }
-      }
-
-    },
     getDispositivos() {
-      let url = "http://auxicam.ddnsking.com/auxicam-back/public/api/dispositivosUsuarios";
-      axios
-        .get(url, {
-          params: {
-            usuario: localStorage.user,
-          },
-        })
+      User.dispositivosUsuario(localStorage.user)
         .then((response) => {
           this.dispositivos = response.data;
-          console.log(this.dispositivos);
         })
-        .catch((e) => {
-          console.log(e.response.data);
+        .catch((error) => {
+          console.log(error.response.data);
         });
     },
-    getLocalizacionesDispositivos() {
-      let url = "http://auxicam.ddnsking.com/auxicam-back/public/api/localizaciones";
-      axios
-        .get(url, {
-          params: {
-            dispositivoid: this.selectDispositivo,
-            fechaInicio: this.fechaInicio,
-            fechaFin: this.fechaFin
-          },
-        })
-        .then((response) => {
-          this.items = response.data;
-          this.table = true;
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+
+    validate() {
+      var validacion = this.$refs.form.validate()
+      if (validacion != false) {
+        this.getHistorico();
+      }
     },
-    detalle(item) {
-      this.markers.push({
-        position: {
-          lat: parseFloat(item.latitud),
-          lng: parseFloat(item.longitud),
+
+    buscar() {
+      if (this.selectDispositivo == "") {
+        this.textSnack =
+          "No puede busacr sin seleccionar al menos un dispositivo";
+        this.snackbar = true;
+      } else {
+        if (this.fechaInicio == "" || this.fechaFin == "") {
+          this.textSnack = "Debe completar los campos fecha inicio y fecha fin";
+          this.snackbar = true;
+        } else {
+          this.getLocalizacionesDispositivos();
         }
-      })
-      this.dialog = true;
+      }
     },
+
+    getHistorico() {
+      let data = {
+        "dispositivoid" : this.selectDispositivo,
+        "fecha" : this.fecha,
+        "horaInicio" : this.horaInicio,
+        "horaFin" :  this.horaFin
+      }
+      User.obtenerHistorico(data)
+      .then(response=>{
+        console.log(response)
+        this.center = response.data[0]
+        this.polyline.latlngs = response.data
+        this.markerLatLng = response.data[response.data.length-1]
+        this.cargar = true
+      }).catch()
+    },
+
   },
 };
 </script>

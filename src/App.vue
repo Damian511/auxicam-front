@@ -10,19 +10,14 @@
         <v-list-item>
           <v-list-item-content class="text-center">
             <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
-            <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
-            <v-list-item-subtitle>{{user.email}}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
       <v-list>
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
-          link
-          :to="item.link"
-        >
+        <v-list-item v-for="item in items" :key="item.title" link :to="item.link">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -40,10 +35,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app color="primary" v-if="isLoggedIn">
-      <v-app-bar-nav-icon
-        color="white"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon color="white" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title class="white--text">AUXICAM - APP</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -57,6 +49,9 @@
     </v-app-bar>
 
     <v-main>
+      <v-alert type="error" dense class="m-3" v-if="user.pass_default">
+        Aún no realizo el cambio de su contraseña por defecto
+      </v-alert>
       <router-view></router-view>
     </v-main>
   </v-app>
@@ -74,7 +69,7 @@ export default {
         { title: "Vincular", icon: "sync", link: "/vincular" },
         { title: "Historial", icon: "history", link: "/historial" },
       ],
-      user:''
+      user: ''
     };
   },
   mounted() {
@@ -95,7 +90,7 @@ export default {
         this.$router.push({ name: "Login" });
       });
     },
-    
+
   },
 };
 </script>

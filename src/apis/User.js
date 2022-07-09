@@ -36,5 +36,20 @@ export default {
   dispositivosUsuario(data){
     return Api.get("/dispositivosUsuarios?usuarioid="+data);
   },
+  
+  //metodos para el inicio
+  obtenerLocalizaciones(data){
+    return Api.get("/localizaciones?dispositivoid="+data);
+  },
+
+  //metodos para el historico
+  obtenerHistorico(data){
+    return Api.put("/historico",data);
+  },
+
+  //metodo para cambiar contraseña
+  cambiarPass(form,id){
+    return Api.put("/cambiarPass/"+id,form);
+  },
 
 };

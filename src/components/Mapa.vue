@@ -1,19 +1,8 @@
 <template>
-  <div style="height: 500px; width: 100%;margin-left: 50px">
-    <l-map
-    id="mapa"
-      v-if="showMap"
-      :zoom="zoom"
-      :center="center"
-      :options="mapOptions"
-      style="height: 80%"
-      @update:center="centerUpdate"
-      @update:zoom="zoomUpdate"
-    >
-      <l-tile-layer
-        :url="url"
-        :attribution="attribution"
-      />
+  <div style="height: 500px; width: 95%;margin-left: 1%">
+    <l-map id="mapa" v-if="showMap" :zoom="zoom" :center="center" :options="mapOptions" style="height: 80%"
+      @update:center="centerUpdate" @update:zoom="zoomUpdate">
+      <l-tile-layer :url="url" :attribution="attribution" />
       <l-marker :lat-lng="withPopup">
       </l-marker>
     </l-map>
@@ -77,7 +66,7 @@ export default {
 };
 </script>
 <style scoped>
-.mapa{
-  z-index:1 !important;
+.mapa {
+  z-index: 1 !important;
 }
 </style>

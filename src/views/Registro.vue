@@ -10,70 +10,27 @@
                   <v-toolbar-title>REGISTRAR USUARIO</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text>
-                  <v-form
-                    ref="login"
-                    v-model="valid"
-                    lazy-validation
-                    @submit.prevent="validar"
-                  >
-                    <v-text-field
-                      v-model="nombre"
-                      prepend-icon="person"
-                      label="Nombre y Apellido"
-                      type="text"
-                      :rules="defaultRules"
-                      required
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="usuario"
-                      prepend-icon="account_circle"
-                      label="Nombre de Usuario"
-                      :rules="defaultRules"
-                      required
-                    >
+                  <v-form ref="login" v-model="valid" lazy-validation @submit.prevent="validar">
+                    <v-text-field v-model="nombre" prepend-icon="person" label="Nombre y Apellido" type="text"
+                      :rules="defaultRules" required></v-text-field>
+                    <v-text-field v-model="usuario" prepend-icon="account_circle" label="Nombre de Usuario"
+                      :rules="defaultRules" required>
                     </v-text-field>
-                    <v-text-field
-                      v-model="correo"
-                      prepend-icon="email"
-                      label="Correo Eléctronico"
-                      :rules="emailRules"
-                      required
-                    >
+                    <v-text-field v-model="correo" prepend-icon="email" label="Correo Eléctronico" :rules="emailRules"
+                      required>
                     </v-text-field>
-                    <v-text-field
-                      v-model="password"
-                      id="password"
-                      prepend-icon="lock"
-                      :append-icon="showPass ? 'visibility' : 'visibility_off'"
-                      label="Contraseña"
-                      :type="showPass ? 'text' : 'password'"
-                      :rules="defaultRules"
-                      @click:append="showPass = !showPass"
-                      required
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="passwordConfirm"
-                      id="password"
-                      prepend-icon="lock"
-                      :append-icon="showRePass ? 'visibility' : 'visibility_off'"
-                      label="Confirmar Contraseña"
-                      :type="showRePass ? 'text' : 'password'"
-                      :rules="defaultRules.concat(passwordConfirmationRule)"
-                      @click:append="showRePass = !showRePass"
-                      required
-                    ></v-text-field>
+                    <v-text-field v-model="password" id="password" prepend-icon="lock"
+                      :append-icon="showPass ? 'visibility' : 'visibility_off'" label="Contraseña"
+                      :type="showPass ? 'text' : 'password'" :rules="defaultRules" @click:append="showPass = !showPass"
+                      required></v-text-field>
+                    <v-text-field v-model="passwordConfirm" id="password" prepend-icon="lock"
+                      :append-icon="showRePass ? 'visibility' : 'visibility_off'" label="Confirmar Contraseña"
+                      :type="showRePass ? 'text' : 'password'" :rules="defaultRules.concat(passwordConfirmationRule)"
+                      @click:append="showRePass = !showRePass" required></v-text-field>
                     <v-row>
                       <v-spacer></v-spacer>
-                      <v-btn
-                        color="primary"
-                        type="submit"
-                        class="ma-2"
-                        justify-space-between
-                      >REGISTRAR</v-btn
-                      >
-                      <v-btn color="warning" class="ma-2" @click="resetear"
-                        >LIMPIAR</v-btn
-                      >
+                      <v-btn color="primary" type="submit" class="ma-2" justify-space-between>REGISTRAR</v-btn>
+                      <v-btn color="warning" class="ma-2" @click="resetear">LIMPIAR</v-btn>
                     </v-row>
                   </v-form>
                 </v-card-text>
@@ -115,7 +72,7 @@ export default {
     },
   },
   methods: {
-    validar() {},
+    validar() { },
     resetear() {
       this.$refs.login.reset();
       this.showPass = false;

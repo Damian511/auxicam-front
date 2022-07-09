@@ -2,58 +2,26 @@
   <v-container fluid>
     <v-row>
       <v-col cols="4">
-        <v-select
-          :items="dispositivos"
-          item-text="mascota.nombre"
-          v-model="selectDispositivo"
-          item-value="dispositivoid"
-          label="Selecciones un dispositivo"
-          @change="getLocalizacionesDispositivos"
-        >
+        <v-select :items="dispositivos" item-text="mascota.nombre" v-model="selectDispositivo"
+          item-value="dispositivoid" label="Selecciones un dispositivo" @change="getLocalizacionesDispositivos">
         </v-select>
       </v-col>
       <v-col cols="3">
-        <v-menu
-          v-model="menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="fechaInicio"
-              label="Fecha Inicio"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              clearable
-            ></v-text-field>
+            <v-text-field v-model="fechaInicio" label="Fecha Inicio" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+              v-on="on" clearable></v-text-field>
           </template>
           <v-date-picker v-model="fechaInicio" @input="menu = false"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col cols="3">
-        <v-menu
-          v-model="menu2"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="fechaFin"
-              label="Fecha Fin"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              clearable
-            ></v-text-field>
+            <v-text-field v-model="fechaFin" label="Fecha Fin" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+              v-on="on" clearable></v-text-field>
           </template>
           <v-date-picker v-model="fechaFin" @input="menu2 = false"></v-date-picker>
         </v-menu>
@@ -66,61 +34,34 @@
     </v-row>
     <!--container-->
     <span class="headline">Historial de Localizaciones</span>
-    <v-data-table
-      v-if="table"
-      :headers="headers"
-      :header-props="headerProps"
-      :items="items"
-      :items-per-page="5"
-      class="elevation-1"
-    >
+    <v-data-table v-if="table" :headers="headers" :header-props="headerProps" :items="items" :items-per-page="5"
+      class="elevation-1">
       <template v-slot:[`item.actions`]="{ item }">
-        <v-btn color="primary" class="white--text" @click="detalle(item)"
-          >Ubicación</v-btn
-        >
+        <v-btn color="primary" class="white--text" @click="detalle(item)">Ubicación</v-btn>
       </template>
     </v-data-table>
 
-    <v-dialog
-      v-model="dialog"
-      transition="dialog-bottom-transition"
-      max-width="600"
-      persistent
-    >
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="600" persistent>
       <v-card>
         <v-card-title>
-          <v-toolbar color="primary" class="white--text"
-            >Historial Ubicación
+          <v-toolbar color="primary" class="white--text">Historial Ubicación
             <v-spacer></v-spacer>
             <v-icon color="white" @click="dialog = false">close</v-icon>
           </v-toolbar>
         </v-card-title>
         <v-card-text>
-        <GmapMap
-          :center="{ lat: -25.4922182, lng: -57.4554114 }"
-          :zoom="7"
-          map-type-id="terrain"
-          style="width: 550px; height: 250px"
-        >
-          <GmapMarker
-            :key="index"
-            v-for="(m, index) in markers"
-            :position="m.position"
-            :clickable="true"
-            :draggable="true"
-            @click="center = m.position"
-          />
-        </GmapMap>
+          <GmapMap :center="{ lat: -25.4922182, lng: -57.4554114 }" :zoom="7" map-type-id="terrain"
+            style="width: 550px; height: 250px">
+            <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true"
+              :draggable="true" @click="center = m.position" />
+          </GmapMap>
         </v-card-text>
       </v-card>
     </v-dialog>
     <!--pie de pagina-->
     <v-footer color="blue-grey darken-1" padless absolute>
       <v-row justify="center" no-gutters>
-        <v-col
-          class="blue-grey lighten-1 py-4 text-center white--text"
-          cols="12"
-        >
+        <v-col class="blue-grey lighten-1 py-4 text-center white--text" cols="12">
           {{ new Date().getFullYear() }} / <strong>AUXICAM - APP v0.1</strong>
         </v-col>
       </v-row>
@@ -146,9 +87,9 @@ export default {
   data() {
     return {
       menu: false,
-      menu2:false,
+      menu2: false,
       fechaInicio: "",
-      fechaFin:"",
+      fechaFin: "",
       table: false,
       dialog: false,
       dispositivos: [],
@@ -175,15 +116,15 @@ export default {
     this.getDispositivos();
   },
   methods: {
-    buscar(){
-      if(this.selectDispositivo == ''){
+    buscar() {
+      if (this.selectDispositivo == '') {
         this.textSnack = "No puede busacr sin seleccionar al menos un dispositivo"
         this.snackbar = true
-      }else{
-        if( this.fechaInicio == '' || this.fechaFin == ''){
+      } else {
+        if (this.fechaInicio == '' || this.fechaFin == '') {
           this.textSnack = "Debe completar los campos fecha inicio y fecha fin"
           this.snackbar = true
-        }else{
+        } else {
           this.getLocalizacionesDispositivos()
         }
       }
@@ -212,7 +153,7 @@ export default {
           params: {
             dispositivoid: this.selectDispositivo,
             fechaInicio: this.fechaInicio,
-            fechaFin:this.fechaFin
+            fechaFin: this.fechaFin
           },
         })
         .then((response) => {
@@ -225,11 +166,11 @@ export default {
     },
     detalle(item) {
       this.markers.push({
-          position: {
-            lat: parseFloat(item.latitud),
-            lng: parseFloat(item.longitud),
-          }
-        })
+        position: {
+          lat: parseFloat(item.latitud),
+          lng: parseFloat(item.longitud),
+        }
+      })
       this.dialog = true;
     },
   },

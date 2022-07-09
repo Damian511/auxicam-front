@@ -9,7 +9,8 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-content class="text-center">
-            <v-list-item-title class="text-h6">Bienvenido {{user.name}}</v-list-item-title>
+            <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
+            <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
             <v-list-item-subtitle>{{user.email}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -69,7 +70,7 @@ export default {
       isLoggedIn: false,
       drawer: false,
       items: [
-        { title: "Inicio", icon: "home", link: "/dashboard" },
+        { title: "Inicio", icon: "home", link: "/" },
         { title: "Vincular", icon: "sync", link: "/vincular" },
         { title: "Historial", icon: "history", link: "/historial" },
       ],
@@ -83,6 +84,7 @@ export default {
     this.isLoggedIn = !!localStorage.getItem("auth");
     User.auth().then(response => {
       this.user = response.data;
+      localStorage.user = response.data.id
     });
   },
   methods: {

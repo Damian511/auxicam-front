@@ -11,11 +11,6 @@ Vue.prototype.$base = 'htpp://localhost/auxicam-back/public/index.php/api/';
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView
-  },
-  {
     path: '/about',
     name: 'about',
     component: function () {
@@ -35,7 +30,7 @@ const routes = [
     meta: { guestOnly: true }
   },
   {
-    path: "/dashboard",
+    path: "/",
     name: "Dashboard",
     component: Dashboard,
     meta: { authOnly: true }

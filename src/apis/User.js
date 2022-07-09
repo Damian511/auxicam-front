@@ -24,7 +24,17 @@ export default {
     return Api.get("/user");
   },
 
-  prueba(){
-    return Api.get("prueba");
-  }
+  //metodos para la vista de vincular
+  comprobarSIM(numero){
+    return Api.put("/comprobarSIM",numero);
+  },
+
+  crearVinculo(data){
+    return Api.post("/altaDispositivo",data);
+  },
+
+  dispositivosUsuario(data){
+    return Api.get("/dispositivosUsuarios?usuarioid="+data);
+  },
+
 };

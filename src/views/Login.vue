@@ -13,15 +13,21 @@
                   <v-form ref="login" v-model="valid" lazy-validation @submit.prevent="validar">
                     <v-text-field v-model="form.email" prepend-icon="person" name="login" label="Correo Electronico"
                       type="text" :rules="defaultRules" required autocomplete="off"></v-text-field>
-                    <span class="text-danger" v-if="errors.email">
+                    <!-- <span class="text-danger" v-if="errors.email">
                       {{ errors.email[0] }}
-                    </span>
+                    </span> -->
                     <v-text-field v-model="form.password" id="password" prepend-icon="lock" name="password"
                       label="Contraseña" type="password" :rules="defaultRules" required autocomplete="off">
                     </v-text-field>
-                    <span class="text-danger" v-if="errors.password">
+                    <!-- <span class="text-danger" v-if="errors.password">
                       {{ errors.password[0] }}
-                    </span>
+                    </span> -->
+                    <v-alert dense text type="error" v-if="errors.email">
+                      {{ errors.email[0] }}
+                    </v-alert>
+                    <v-alert dense text type="error" v-if="errors.cert">
+                      {{ errors.cert }}
+                    </v-alert>
                     <v-row>
                       <v-col>
                         <span class="font-italic">Aún no tiene una cuenta?
@@ -76,9 +82,11 @@ export default {
     },
     login() {
       User.login(this.form)
-        .then(() => {
+        .then((response) => {
           this.$root.$emit("login", true);
+          this.$emit('update',true);
           localStorage.setItem("auth", "true");
+          localStorage.user = response.data.id;
           this.$router.push({ name: "Dashboard" });
         })
         .catch((error) => {

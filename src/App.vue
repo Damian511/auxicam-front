@@ -49,10 +49,13 @@
     </v-app-bar>
 
     <v-main>
-      <v-alert type="error" dense class="m-3" v-if="user.pass_default">
-        Aún no realizo el cambio de su contraseña por defecto
-      </v-alert>
-      <router-view></router-view>
+<!--       <div v-if="isLoggedIn">
+        <v-alert type="error" dense class="mt-3" v-if="user.pass_default == true">
+          Aún no realizo el cambio de su contraseña por defecto <router-link to="/passChange"
+            class="text-decoration-none white--text font-weight-bold">Cambiar contraseña</router-link>
+        </v-alert>
+      </div> -->
+      <router-view @update="getUser"></router-view>
     </v-main>
   </v-app>
 </template>
@@ -77,20 +80,21 @@ export default {
       this.isLoggedIn = true;
     });
     this.isLoggedIn = !!localStorage.getItem("auth");
-    User.auth().then(response => {
-      this.user = response.data;
-      localStorage.user = response.data.id
-    });
   },
   methods: {
     logout() {
       User.logout().then(() => {
         localStorage.removeItem("auth");
+        localStorage.removeItem("user");
         this.isLoggedIn = false;
         this.$router.push({ name: "Login" });
       });
     },
-
+    getUser(){
+        User.auth().then(response => {
+          this.user = response.data;
+        });
+    }
   },
 };
 </script>

@@ -7,16 +7,35 @@ import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Maska from 'maska'
 
+Vue.prototype.$userGlobal= ''
+
 Vue.use(Maska)
 
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
 
-import "bootstrap";
+/* import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+ */
+
 
 Vue.config.productionTip = false
+
+
+import Echo from 'laravel-echo';
+
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.VUE_APP_WEBSOCKETS_KEY,
+    wsHost: process.env.VUE_APP_WEBSOCKETS_SERVER,
+    wsPort: process.env.VUE_APP_WEBSOCKETS_PORT,
+    forceTLS: false,
+    disableStats: true
+});
+
 
 new Vue({
   router,

@@ -70,11 +70,13 @@ export default {
         cambiarPass() {
             User.cambiarPass(this.form, localStorage.user)
                 .then(() => {
-                    User.logout().then(() => {
-                        localStorage.removeItem("auth");
+                    this.$router.push({ name: "Dashboard" });
+/*                     User.logout().then(() => {
+                        location.reload()
+/*                         localStorage.removeItem("auth");
                         this.isLoggedIn = false;
-                        this.$router.push({ name: "Login" });
-                    })
+                        this.$router.push({ name: "Login" }); 
+                    }) */
                 }).catch(error => {
                     if (error.response.status === 422) {
                         this.error = error.response.data.error

@@ -26,7 +26,6 @@
       </v-card-text>
     </v-card>
 
-
     <v-footer color="blue-grey darken-1" padless absolute>
       <v-row justify="center" no-gutters>
         <v-btn color="white" text class="my-2" @click="dialog = true">Estado del Dispositivo</v-btn>
@@ -39,12 +38,6 @@
       <v-card>
         <v-toolbar color="primary" dark>Estado Dispositivo</v-toolbar>
         <v-card-text>
-          <v-row class="mt-1">
-            <v-col>
-              <v-alert type="warning" dense v-if="selectDispositivo == ''">Seleccione un dispositivo para ver el estado
-              </v-alert>
-            </v-col>
-          </v-row>
           <v-row>
             <v-col>
               <span class="font-weight-medium subtitle-1">ID Dispositivo:
@@ -118,16 +111,21 @@ export default {
     };
   },
   created() {
-    User.auth().then((response) => {
-      this.user = response.data;
-    });
     this.getDispositivos();
   },
   methods: {
+    socket(){
+      window.Echo.channel('channel')
+        .listen('NewLocation',(response)=>{
+          this.markerLatLng = response.location[0]
+          this.polyline.latlngs.push(response.location[0])
+      })
+    },
     getDispositivos() {
       User.dispositivosUsuario(localStorage.user)
         .then(response => {
           this.dispositivos = response.data
+          this.socket()
         }).catch(error => {
           console.log(error.response.data)
         })

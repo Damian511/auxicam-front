@@ -4,6 +4,9 @@
     <v-col cols="4">
       <v-select :items="dispositivos" item-text="mascota.nombre" item-value="dispositivoid" v-model="selectDispositivo"
         label="Selecciones un dispositivo" @change="getLocalizaciones">
+        <template slot="no-data">
+          My no data message
+        </template>
       </v-select>
       {{ posicion }}
     </v-col>
@@ -72,10 +75,17 @@ export default {
       posicion: [],
     };
   },
-  created() {
+  mounted() {
     this.getDispositivos();
+    this.socket();
   },
   methods: {
+    socket(){
+      window.Echo.channel('channel')
+        .listen('NewLocation',(e)=>{
+          console.log(e)
+      })
+    },
     getLocalizaciones() {
       let url = "http://auxicam.ddnsking.com/auxicam-back/public/api/marcadores";
       axios

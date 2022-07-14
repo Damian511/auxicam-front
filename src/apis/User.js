@@ -11,7 +11,7 @@ export default {
   async login(form) {
     await Csrf.getCookie();
 
-    return Api.post("/login", form);
+    return Api.post("/loginUser", form);
   },
 
   async logout() {

@@ -81,14 +81,6 @@
       </v-card>
     </v-dialog>
 
-    <!--pie de pagina-->
-    <v-footer color="blue-grey darken-1" padless absolute>
-      <v-row justify="center" no-gutters>
-        <v-col class="blue-grey lighten-1 py-4 text-center white--text" cols="12">
-          {{ new Date().getFullYear() }} / <strong>AUXICAM - APP v0.1</strong>
-        </v-col>
-      </v-row>
-    </v-footer>
     <v-snackbar v-model="snackbar">
       {{ textSnack }}
       <template v-slot:action="{ attrs }">

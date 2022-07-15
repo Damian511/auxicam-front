@@ -5,7 +5,7 @@
         <v-layout justify-center>
           <v-flex xs12 sm8 md4>
             <v-slide-y-transition>
-              <v-card class="elevation-24" min-width="600">
+              <v-card class="elevation-24" min-width="50%">
                 <v-toolbar dark color="primary">
                   <v-toolbar-title>INICIAR SESIÓN</v-toolbar-title>
                 </v-toolbar>
@@ -84,7 +84,6 @@ export default {
       User.login(this.form)
         .then((response) => {
           this.$root.$emit("login", true);
-          this.$emit('update',true);
           localStorage.setItem("auth", "true");
           localStorage.user = response.data.id;
           this.$router.push({ name: "Dashboard" });

@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+//import HomeView from '../views/HomeView.vue'
 import Login from "../views/Login.vue"
-import Register from "../views/Register.vue"
+/*import Register from "../views/Register.vue" */
 import Dashboard from "../views/Dashboard.vue"
+import DefaultLayout from '@/layouts/DefaultLayout'
 
 Vue.use(VueRouter)
 
@@ -11,13 +12,64 @@ Vue.prototype.$base = 'htpp://localhost/auxicam-back/public/index.php/api/';
 
 const routes = [
   {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: { guestOnly: true }
+  },
+  {
+    path: "/passChange",
+    name: "PassChange",
+    component: function () {
+      return import('../views/PassChange.vue')
+    },
+    meta: { authOnly: true }
+  },
+  {
+    path: '/',
+    name: 'home',
+    component: DefaultLayout,
+    redirect: '/dashboard',
+    children:[
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
+        meta: { authOnly: true }
+      },
+      {
+        path: "/vincular",
+        name: "Vincular",
+        component:function () {
+          return import('../views/Vincular.vue')
+        },
+        meta: { authOnly: true }
+      },
+      {
+        path: "/historial",
+        name: "Historial",
+        component: function () {
+          return import('../views/Historial.vue')
+        },
+        meta: { authOnly: true }
+      },
+      {
+        path: '/about',
+        name: 'about',
+        component: function () {
+          return import('../views/AboutView.vue')
+        }
+      },
+    ]
+  },
+/*   {
     path: '/about',
     name: 'about',
     component: function () {
       return import('../views/AboutView.vue')
     }
-  },
-  {
+  }, */
+  /* {
     path: "/login",
     name: "Login",
     component: Login,
@@ -58,7 +110,7 @@ const routes = [
       return import('../views/PassChange.vue')
     },
     meta: { authOnly: true }
-  },
+  }, */
 ]
 
 const router = new VueRouter({

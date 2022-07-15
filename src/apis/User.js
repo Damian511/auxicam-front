@@ -52,4 +52,8 @@ export default {
     return Api.put("/cambiarPass/"+id,form);
   },
 
+  //metodo para ver estado del dispositivo
+  verEstado(id){
+    return Api.get("/verEstado?dispositivoid="+id);
+  }
 };

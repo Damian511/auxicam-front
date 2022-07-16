@@ -14,13 +14,13 @@
         <v-btn dark color="primary" block @click="comprobarSIM">Vincular</v-btn>
       </v-card-actions>
     </v-card>
-    
+
     <v-card outlined elevation="3" class="mt-2">
       <v-card-title>Dispositivos Vinculados</v-card-title>
       <v-card-text>
         <v-data-table :headers="headers" :items="dispositivos" :header-props="headerProps" v-if="verData">
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="primary" class="white--text" @click="eliminar(item)">Eliminar</v-btn>
+            <v-btn color="primary" class="white--text" @click="deleteItem(item)">Eliminar</v-btn>
           </template>
           <template v-slot:no-data>
             <span>No hay datos que mostrar</span>
@@ -81,6 +81,19 @@
       </v-card>
     </v-dialog>
 
+    <!-- dialog para elimianr -->
+    <v-dialog v-model="dialogDelete" max-width="45%">
+      <v-card>
+        <v-card-title class="d-flex justify-center">Estas seguro de eliminar el dispositivo?</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="closeDelete">Cancelar</v-btn>
+          <v-btn color="green darken-1" text @click="deleteItemConfirm">OK</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar">
       {{ textSnack }}
       <template v-slot:action="{ attrs }">
@@ -107,6 +120,7 @@ export default {
       verVinculacion: false,
       verData: true,
       dialog: false,
+      dialogDelete: false,
       snackbar: false,
       alert: false,
       textError: '',
@@ -117,7 +131,7 @@ export default {
         sortByText: "Filtrar por",
       },
       headers: [
-        { text: "ID", value: "dispositivoid" },
+        //{ text: "ID", value: "dispositivoid" },
         { text: "Mascota", value: "mascota.nombre" },
         { text: "Edad", value: "mascota.edad" },
         { text: "Raza", value: "mascota.raza" },
@@ -125,6 +139,7 @@ export default {
         { text: "Estado", value: "estado.descripcion" },
         { text: "Acciones", value: "actions" },
       ],
+      editedIndex: -1,
       data: {
         numero: ''
       },
@@ -147,6 +162,14 @@ export default {
       dispositivos: []
 
     };
+  },
+  watch: {
+    dialog(val) {
+      val || this.close()
+    },
+    dialogDelete(val) {
+      val || this.closeDelete()
+    },
   },
   created() {
     this.getDispositivos();
@@ -212,8 +235,19 @@ export default {
         })
     },
 
-    eliminarVinculacion(dispositivo_id) {
-      console.log(dispositivo_id)
+    deleteItem(item) {
+      this.editedIndex = item.dispositivoid
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
+    },
+
+    deleteItemConfirm() {
+      User.desvincular(this.editedIndex,localStorage.user).then(()=>{
+        this.dialogDelete = false
+        this.snackbar = true
+        this.textSnack = 'Se elimino el dispositivo'
+        this.getDispositivos();
+      })
     },
 
     close() {
@@ -224,6 +258,14 @@ export default {
       })
       this.mostrarError = true
       this.mostrarCargando = false
+    },
+
+    closeDelete() {
+      this.dialogDelete = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
     finalizar() {

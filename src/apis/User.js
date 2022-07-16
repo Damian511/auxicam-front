@@ -55,5 +55,10 @@ export default {
   //metodo para ver estado del dispositivo
   verEstado(id){
     return Api.get("/verEstado?dispositivoid="+id);
+  },
+
+  //metodo para desvincular dispositivo
+  desvincular(id,datos){
+    return Api.delete("desvincularDispositivo/"+id,{data:{usuarioid:datos}});
   }
 };

@@ -16,8 +16,12 @@
 
     <v-card outlined elevation="3" class="mt-2">
       <v-card-title>Localizaciones</v-card-title>
+      <v-card-subtitle class="blue--text" v-if="gps == '' && cargar == true">Obteniendo información del gps</v-card-subtitle>
+      <v-card-subtitle class="green--text" v-else-if="gps == 'GPS está activo'">{{gps}} </v-card-subtitle>
+      <v-card-subtitle class="red--text" v-else>{{gps}} </v-card-subtitle>
       <v-card-text>
-        <div style="height: 450px; width: 95%; margin-left: 1%">
+        <v-alert dense type="warning" v-if="noData">No hay datos de localizaciones del dispositivo seleccionado</v-alert>
+        <div style="height: 440px; width: 95%; margin-left: 1%">
           <l-map style="height: 80%" :zoom="zoom" :center="center" v-if="cargar">
             <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
             <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color"></l-polyline>
@@ -27,7 +31,7 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="verEstado" persistent max-width="30%">
+    <v-dialog v-model="verEstado" persistent max-width="50%">
       <v-card>
         <v-card-title class="text-h6 font-weight-regular justify-space-between primary">
           <span class="white--text">Estado del Dispositivo</span>
@@ -77,6 +81,8 @@ export default {
   },
   data() {
     return {
+      noData:false,
+      gps:'',
       dialog: false,
       user: null,
       date: null,
@@ -103,19 +109,35 @@ export default {
   },
   created() {
     this.getDispositivos();
+    this.socketGPS();
   },
   methods: {
-    socket() {
-      window.Echo.channel("channel").listen("NewLocation", (response) => {
-        this.markerLatLng = response.location[0];
-        this.polyline.latlngs.push(response.location[0]);
+    socketLocation() {
+      window.Echo.channel("channel-location").listen("NewLocation", (response) => {
+        if(this.noData == true){
+          this.noData = false
+          this.center = response.location[0]
+          this.polyline.latlngs.push(response.location[0]);
+          this.markerLatLng = response.location[0];
+          this.cargar = true
+        }else{
+          this.center = response.location[0]
+          this.polyline.latlngs.push(response.location[0]);
+          this.markerLatLng = response.location[0];
+          this.cargar = true
+        }
+      });
+    },
+    socketGPS() {
+      window.Echo.channel("channel-gps").listen("GpsStatus", (response) => {
+        this.gps = response.status
       });
     },
     getDispositivos() {
       User.dispositivosUsuario(localStorage.user)
         .then((response) => {
           this.dispositivos = response.data;
-          this.socket();
+          this.socketLocation();
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -124,10 +146,15 @@ export default {
     getLocalizaciones() {
       User.obtenerLocalizaciones(this.selectDispositivo)
         .then((response) => {
-          this.center = response.data[0];
-          this.polyline.latlngs = response.data;
-          this.markerLatLng = response.data[response.data.length - 1];
-          this.cargar = true;
+          if(response.data.length == 0){
+            this.noData = true;
+          }else{
+            this.center = response.data[0];
+            this.polyline.latlngs = response.data;
+            this.markerLatLng = response.data[response.data.length - 1];
+            this.noData = false
+            this.cargar = true;
+          }
         })
         .catch((error) => {
           console.log(error.response.data);

@@ -197,11 +197,17 @@ export default {
       }
       User.obtenerHistorico(data)
       .then(response=>{
-        console.log(response)
-        this.center = response.data[0]
-        this.polyline.latlngs = response.data
-        this.markerLatLng = response.data[response.data.length-1]
-        this.cargar = true
+        if(response.data.length == 1){
+          this.center = response.data[0]
+          this.polyline.latlngs = response.data
+          this.markerLatLng = response.data[0]
+          this.cargar = true
+        }else{
+          this.center = response.data[0]
+          this.polyline.latlngs = response.data
+          this.markerLatLng = response.data[response.data.length-1]
+          this.cargar = true
+        }
       }).catch()
     },
 

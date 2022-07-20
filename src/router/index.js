@@ -5,6 +5,7 @@ import Login from "../views/Login.vue"
 /*import Register from "../views/Register.vue" */
 import Dashboard from "../views/Dashboard.vue"
 import DefaultLayout from '@/layouts/DefaultLayout'
+import NotFound from '@/views/NotFound.vue';
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,11 @@ const routes = [
       return import('../views/PassChange.vue')
     },
     meta: { authOnly: true }
+  },
+  {
+    path: '*',
+    name: 'Not Found',
+    component: NotFound
   },
   {
     path: '/',

@@ -83,7 +83,6 @@ export default {
     login() {
       User.login(this.form)
         .then((response) => {
-          this.$root.$emit("login", true);
           localStorage.setItem("auth", "true");
           localStorage.user = response.data.id;
           this.$router.push({ name: "Dashboard" });

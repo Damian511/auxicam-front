@@ -15,7 +15,7 @@
     </v-card>
 
     <v-card outlined elevation="3" class="mt-2">
-      <v-card-title>Localizaciones</v-card-title>
+      <v-card-title>Localizaciones {{status}}</v-card-title>
       <v-card-subtitle class="blue--text" v-if="gps == '' && cargar == true">Obteniendo información del gps</v-card-subtitle>
       <v-card-subtitle class="green--text" v-else-if="gps == 'GPS está activo'">{{gps}} </v-card-subtitle>
       <v-card-subtitle class="red--text" v-else>{{gps}} </v-card-subtitle>
@@ -81,6 +81,7 @@ export default {
   },
   data() {
     return {
+      status:'',
       noData:false,
       gps:'',
       dialog: false,
@@ -110,6 +111,7 @@ export default {
   created() {
     this.getDispositivos();
     this.socketGPS();
+    this.socketStatus();
   },
   methods: {
     socketLocation() {
@@ -131,6 +133,11 @@ export default {
     socketGPS() {
       window.Echo.channel("channel-gps").listen("GpsStatus", (response) => {
         this.gps = response.status
+      });
+    },
+    socketStatus(){
+      window.Echo.channel("channel-dispositivo").listen("DispositivoStatus", (response) => {
+        console.log(response.message)
       });
     },
     getDispositivos() {

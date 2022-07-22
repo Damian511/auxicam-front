@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <h1>Not Found!</h1>
+    <img src="@/assets/error_404.jpg" alt="ERROR_404">
     <p>
       <router-link to="/" class="text-decoration-none">Ir al inicio</router-link>
     </p>
@@ -24,6 +25,10 @@
   h1 {
     color: var(--border);
     font-size: 2em;
+  }
+
+  img {
+    width: 30%;
   }
 
 </style>

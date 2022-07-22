@@ -100,7 +100,7 @@ export default {
       polyline: {
         //latlngs: [[-25.468535,-57.429403], [-25.468117,-57.429185], [-25.468349,-57.428549]],
         latlngs: [],
-        color: "red",
+        color: "#19BAF1",
       },
       //markerLatLng:[-25.468349,-57.428549]
       markerLatLng: [],

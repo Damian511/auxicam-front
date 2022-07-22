@@ -60,5 +60,9 @@ export default {
   //metodo para desvincular dispositivo
   desvincular(id,datos){
     return Api.delete("desvincularDispositivo/"+id,{data:{usuarioid:datos}});
-  }
+  },
+
+  updateUsuario(editedItem, id) {
+    return Api.put("/usuarios/" + id, editedItem)
+  },
 };

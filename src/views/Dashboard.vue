@@ -31,7 +31,7 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="verEstado" persistent max-width="50%">
+    <v-dialog v-model="verEstado" persistent max-width="80%">
       <v-card>
         <v-card-title class="text-h6 font-weight-regular justify-space-between primary">
           <span class="white--text">Estado del Dispositivo</span>

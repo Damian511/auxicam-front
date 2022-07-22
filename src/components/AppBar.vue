@@ -7,13 +7,18 @@
                         <v-icon dark> person </v-icon>
                     </v-avatar>
                 </v-list-item>
-                <v-list-item>
-                    <v-list-item-content class="text-center">
-                        <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
-                        <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
-                        <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-list-item @click="dialog = true" v-bind="attrs" v-on="on">
+                            <v-list-item-content class="text-center">
+                                <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
+                                <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+                                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
+                    <span>Editar Datos</span>
+                </v-tooltip>
             </v-list>
             <v-container class="mt-n2" v-if="user.pass_default == true">
                 <v-alert dense type="error">
@@ -43,6 +48,67 @@
 
             <v-btn text class="white--text" @click="logout"> Salir </v-btn>
         </v-app-bar>
+        <v-dialog v-model="dialog" persistent max-width="50%">
+            <v-card>
+                <v-form ref="form" v-model="valid" lazy-validation>
+                    <v-card-title class="text-h6 font-weight-regular justify-space-between primary">
+                        <span class="white--text">Estado del Dispositivo</span>
+                        <v-btn icon @click="dialog = false">
+                            <v-icon color="white"> close </v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="user.name" prepend-icon="person" label="Nombres"
+                                        :rules="defaultRules"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="user.telefono" prepend-icon="phone" label="N° Celular"
+                                        v-maska="'(####)###-###'" :rules="defaultRules"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="user.direccion" prepend-icon="home" label="Direccion"
+                                        :rules="defaultRules"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40"
+                                        transition="scale-transition" offset-y min-width="auto">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field v-model="user.fechanacimiento" label="Fecha de Nacimiento"
+                                                prepend-icon="event" readonly v-bind="attrs" v-on="on"
+                                                :rules="defaultRules">
+                                            </v-text-field>
+                                        </template>
+                                        <v-date-picker v-model="user.fechanacimiento" @input="menu = false" locale="es"
+                                            min="1950-01-01" :active-picker.sync="activePicker"
+                                            :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)">
+                                        </v-date-picker>
+                                    </v-menu>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1" text @click="close">
+                            Cancelar
+                        </v-btn>
+                        <v-btn color="green darken-1" text @click.prevent="validate">
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-form>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 <script>
@@ -50,6 +116,13 @@ import User from "@/apis/User";
 export default {
     data() {
         return {
+            activePicker: '',
+            menu: false,
+            defaultRules: [
+                (v) => !!v || "El campo es obligatorio",
+            ],
+            valid: false,
+            dialog: false,
             isLoggedIn: false,
             drawer: false,
             items: [
@@ -59,6 +132,11 @@ export default {
             ],
             user: "",
         };
+    },
+    watch: {
+        menu(val) {
+            val && setTimeout(() => (this.activePicker = 'YEAR'))
+        },
     },
     mounted() {
         this.$root.$on("login", () => {
@@ -82,6 +160,22 @@ export default {
                     this.user = response.data;
                 })
                 .catch();
+        },
+        editUsuario() {
+            User.updateUsuario(this.user, this.user.id)
+                .then(() => {
+                    this.setUser()
+                    this.close()
+                }).catch()
+        },
+        validate() {
+            var validacion = this.$refs.form.validate();
+            if (validacion != false) {
+                this.editUsuario()
+            }
+        },
+        close() {
+            this.dialog = false;
         },
     },
 };

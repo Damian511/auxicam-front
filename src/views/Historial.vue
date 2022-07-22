@@ -5,12 +5,12 @@
       <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validar">
         <v-card-text>
           <v-row>
-            <v-col cols="3">
+            <v-col cols="12" sm="6" md="3">
               <v-select :items="dispositivos" item-text="descripcion" item-value="dispositivoid"
-                v-model="selectDispositivo" label="Selecciones un dispositivo" :rules="defaultRules">
+                v-model="selectDispositivo" label="Selecciones un dispositivo" :rules="defaultRules" prepend-icon="sell">
               </v-select>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" sm="6" md="3">
               <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                 offset-y min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
@@ -20,7 +20,7 @@
                 <v-date-picker v-model="fecha" @input="menu = false" locale="es"></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" sm="6" md="3">
               <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :nudge-right="40"
                 :return-value.sync="horaInicio" transition="scale-transition" offset-y max-width="290px"
                 min-width="290px">
@@ -33,7 +33,7 @@
                 </v-time-picker>
               </v-menu>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" sm="6" md="3">
               <v-menu ref="menu3" v-model="menu3" :close-on-content-click="false" :nudge-right="40"
                 :return-value.sync="horaFin" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                 <template v-slot:activator="{ on, attrs }">

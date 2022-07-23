@@ -48,7 +48,7 @@
 
             <v-btn text class="white--text" @click="logout"> Salir </v-btn>
         </v-app-bar>
-        <v-dialog v-model="dialog" persistent max-width="50%">
+        <v-dialog v-model="dialog" persistent max-width="80%">
             <v-card>
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-card-title class="text-h6 font-weight-regular justify-space-between primary">

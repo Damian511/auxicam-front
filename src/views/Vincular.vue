@@ -56,7 +56,7 @@
 
 
     <!--open dialog-->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="600" persistent>
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="80%" persistent>
       <v-card>
         <v-toolbar color="primary" dark>Datos de la Mascota <v-spacer></v-spacer>
           <v-icon @click="close">close</v-icon>

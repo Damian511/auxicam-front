@@ -52,7 +52,7 @@
             <v-card>
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-card-title class="text-h6 font-weight-regular justify-space-between primary">
-                        <span class="white--text">Estado del Dispositivo</span>
+                        <span class="white--text">Datos del Usuario</span>
                         <v-btn icon @click="dialog = false">
                             <v-icon color="white"> close </v-icon>
                         </v-btn>

@@ -52,10 +52,10 @@
       </v-form>
     </v-card>
 
-    <v-card outlined elevation="3" class="mt-2">
+    <v-card outlined elevation="3" class="mt-2 mb-1">
       <v-card-title>Localizaciones</v-card-title>
       <v-card-text>
-        <div style="height: 500px; width: 95%;margin-left: 1%">
+        <div style="height: 440px; width: 95%;margin-left: 1%">
           <l-map style="height: 80%" :zoom="zoom" :center="center" v-if="cargar">
             <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
             <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color"></l-polyline>

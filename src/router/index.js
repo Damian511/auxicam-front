@@ -66,6 +66,14 @@ const routes = [
           return import('../views/AboutView.vue')
         }
       },
+      {
+        path: '/cambiarPass',
+        name: 'CambiarPass',
+        component: function () {
+          return import('../views/PassChange.vue')
+        },
+        meta: { authOnly: true }
+      },
     ]
   },
 /*   {

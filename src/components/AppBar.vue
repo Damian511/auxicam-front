@@ -7,18 +7,13 @@
                         <v-icon dark> person </v-icon>
                     </v-avatar>
                 </v-list-item>
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-list-item @click="dialog = true" v-bind="attrs" v-on="on">
-                            <v-list-item-content class="text-center">
-                                <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
-                                <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </template>
-                    <span>Editar Datos</span>
-                </v-tooltip>
+                <v-list-item>
+                    <v-list-item-content class="text-center">
+                        <v-list-item-title class="text-h6">Bienvenido</v-list-item-title>
+                        <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+                        <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
             </v-list>
             <v-container class="mt-n2" v-if="user.pass_default == true">
                 <v-alert dense type="error">
@@ -46,7 +41,26 @@
             <v-toolbar-title class="white--text">AUXICAM - APP</v-toolbar-title>
             <v-spacer></v-spacer>
 
-            <v-btn text class="white--text" @click="logout"> Salir </v-btn>
+            <v-menu offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                    <!--vista para pantallas chicas-->
+                    <v-avatar size="45" v-bind="attrs" v-on="on" class="d-md-none">
+                        <v-icon color="white" class="d-md-none">account_circle</v-icon>
+                    </v-avatar>
+                    <!--vist para pantallas grandes-->
+                    <v-btn text class="white--text ma-2 hidden-sm-and-down" v-bind="attrs" v-on="on"> {{ user.name }}
+                        <v-icon dark class="mb-1">person
+                        </v-icon>
+                    </v-btn>
+                </template>
+                <v-list color="primary">
+                    <v-list-item v-for="item in itemsMenu" :key="item.title" link @click="item.click">
+                        <v-list-item-title class="white--text">{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+
+
         </v-app-bar>
         <v-dialog v-model="dialog" persistent max-width="80%">
             <v-card>
@@ -130,6 +144,11 @@ export default {
                 { title: "Vincular", icon: "sync", link: "/vincular" },
                 { title: "Historial", icon: "history", link: "/historial" },
             ],
+            itemsMenu: [
+                { title: 'Editar Perfil', click: this.open },
+                { title: 'Cambiar Contraseña', click: this.cambiarPass },
+                { title: 'Salir', click: this.logout },
+            ],
             user: "",
         };
     },
@@ -146,6 +165,9 @@ export default {
         this.setUser();
     },
     methods: {
+        cambiarPass(){
+            this.$router.push({ name: "CambiarPass" });
+        },
         logout() {
             User.logout().then(() => {
                 localStorage.removeItem("auth");
@@ -173,6 +195,9 @@ export default {
             if (validacion != false) {
                 this.editUsuario()
             }
+        },
+        open() {
+            this.dialog = true
         },
         close() {
             this.dialog = false;

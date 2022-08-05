@@ -23,6 +23,7 @@ Vue.config.productionTip = false
 
 
 import Echo from 'laravel-echo';
+import './registerServiceWorker'
 
 window.Pusher = require('pusher-js');
 

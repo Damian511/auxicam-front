@@ -1,9 +1,10 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
+  pwa: {
+    name: 'Auxicam',
+    themeColor: '#78909C'
+  },
   transpileDependencies: [
     'vuetify'
   ],
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/auxicam/'
-    : '/'
 })
